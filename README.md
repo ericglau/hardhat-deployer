@@ -1,53 +1,24 @@
-# hardhat-deployer
-
-A repository for deploying Solidity smart contracts to EVM compatible chains.
-
-_Leveraging [Hardhat](https://hardhat.org/) and [Open Zeppelin](https://github.com/OpenZeppelin/openzeppelin-contracts)_
-
-## Requirements
-
-NodeJS v14.16.1
-
 ## Installation
 
 ```shell script
 $ npm install
 ```
 
-## Contract Deployment
+## Proxy Deployment and Upgrade
 
-1. Create a `.env` file:
-
-```env
-DEPLOYER_PRIVATE_KEY=<PRIVATE_KEY_WITHOUT_0X_PREFIX>
-INFURA_PROJECT_ID=<INFURA_PROJECT_ID> (Ethereum only)
+1. In a separate terminal, start a Hardhat local node:
+```
+npx hardhat node
 ```
 
-2. Fund your account with the corresponding protocol token. Use the following faucets for testnet:
-
-- [Kovan Testnet Faucet](https://faucet.kovan.network/)
-- [BSC Testnet Faucet](https://testnet.binance.org/faucet-smart)
-
-3. Deploy your contract
-
-```shell script
-npx hardhat deploy --network <NETWORK> --tags <SOLIDITY_CONTRACT>
+2. Deploy proxy
+```
+npx hardhat deploy --network localhost --tags Greeter
 ```
 
-The `NETWORK` must be defined in `hardhat.config.ts`.
+3. Copy the proxy address (of `Greeter_Proxy`) from the output to the [`proxyAddress` variable of `scripts/upgrade.js`](https://github.com/ericglau/hardhat-deployer/blob/master/scripts/upgrade.js#L5).
 
-To add a network to the configuration file, add an object key under `networks` with:
-
-- The JSON-RPC URL.
-- The corresponding chain ID (listed [here](https://chainid.network/))
-
-For example, to deploy `ERC20.sol` to the `Kovan` testnet:
-
-```shell script
-npx hardhat deploy --network kovan --tags ERC20
+4. `forceImport` and upgrade using Hardhat Upgrades plugin
 ```
-
-A deployment will be recorded in the `deployments/` folder under the relevant network with the contract address and EVM bytecode.
-
-Adding the `--reset` option to the above command resets the deployments from scratch – ignoring
-previous deployments and deleting them from the disk.
+npx hardhat run scripts/upgrade.js --network localhost  
+```
