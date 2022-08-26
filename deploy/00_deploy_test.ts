@@ -8,12 +8,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   } = hre;
   const { deployer } = await getNamedAccounts();
 
-  await deploy('ERC20', {
+  await deploy('Greeter', {
     from: deployer,
-    args: ['Medium', 'MDM'],
     log: true,
+    args: ['Hi World'],
+    proxy: { 
+      proxyContract: 'OpenZeppelinTransparentProxy',
+      methodName: 'initialize',
+    },
   });
 };
 
 export default func;
-func.tags = ['ERC20'];
+func.tags = ['Greeter'];
